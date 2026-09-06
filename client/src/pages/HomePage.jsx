@@ -1,20 +1,23 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import * as THREE from "three";
 
 /* ------------------------------------------------------------------
    RAGNARÖK — a digital atlas of Norse mythology
    Single-file React landing page. No external component/CSS files.
+   Includes three.js WebGL scenes for the hero, the Yggdrasil map,
+   and the Ragnarök ember field.
 ------------------------------------------------------------------- */
 
 const REALMS = [
-  { id: "asgard", name: "ASGARD", tag: "Realm of the Æsir", people: "Odin · Thor · Frigg · Heimdall", x: 50, y: 12 },
-  { id: "vanaheim", name: "VANAHEIM", tag: "Realm of the Vanir", people: "Freyja · Freyr · Njörðr", x: 20, y: 24 },
-  { id: "alfheim", name: "ALFHEIM", tag: "Realm of the light elves", people: "Freyr's dwelling", x: 78, y: 24 },
-  { id: "midgard", name: "MIDGARD", tag: "Realm of humankind", people: "Bound by the serpent Jörmungandr", x: 50, y: 46 },
-  { id: "jotunheim", name: "JÖTUNHEIM", tag: "Realm of the giants", people: "Skaði · Útgarða-Loki", x: 84, y: 50 },
-  { id: "svartalfheim", name: "SVARTALFHEIM", tag: "Realm of the dwarves", people: "Forge of Mjölnir and Gungnir", x: 16, y: 52 },
-  { id: "muspelheim", name: "MUSPELHEIM", tag: "Realm of primordial fire", people: "Surtr, who ends the world in flame", x: 68, y: 70 },
-  { id: "niflheim", name: "NIFLHEIM", tag: "Realm of primordial ice", people: "Source of the eleven rivers", x: 32, y: 70 },
-  { id: "hel", name: "HEL", tag: "Realm of the dishonored dead", people: "Ruled by Loki's daughter, Hel", x: 50, y: 88 },
+  { id: "asgard", name: "ASGARD", tag: "Realm of the Æsir", people: "Odin · Thor · Frigg · Heimdall", x: 50, y: 12, z: 1.6 },
+  { id: "vanaheim", name: "VANAHEIM", tag: "Realm of the Vanir", people: "Freyja · Freyr · Njörðr", x: 20, y: 24, z: -0.6 },
+  { id: "alfheim", name: "ALFHEIM", tag: "Realm of the light elves", people: "Freyr's dwelling", x: 78, y: 24, z: -0.6 },
+  { id: "midgard", name: "MIDGARD", tag: "Realm of humankind", people: "Bound by the serpent Jörmungandr", x: 50, y: 46, z: 0 },
+  { id: "jotunheim", name: "JÖTUNHEIM", tag: "Realm of the giants", people: "Skaði · Útgarða-Loki", x: 84, y: 50, z: 1.1 },
+  { id: "svartalfheim", name: "SVARTALFHEIM", tag: "Realm of the dwarves", people: "Forge of Mjölnir and Gungnir", x: 16, y: 52, z: 1.1 },
+  { id: "muspelheim", name: "MUSPELHEIM", tag: "Realm of primordial fire", people: "Surtr, who ends the world in flame", x: 68, y: 70, z: -1.1 },
+  { id: "niflheim", name: "NIFLHEIM", tag: "Realm of primordial ice", people: "Source of the eleven rivers", x: 32, y: 70, z: -1.1 },
+  { id: "hel", name: "HEL", tag: "Realm of the dishonored dead", people: "Ruled by Loki's daughter, Hel", x: 50, y: 88, z: -1.8 },
 ];
 
 const GODS = [
@@ -126,7 +129,476 @@ function Reveal({ children, className = "", threshold, as: Tag = "div", ...rest 
   );
 }
 
-export default function HomePage() {
+/* ------------------------------------------------------------------
+   THREE.JS — shared helpers
+------------------------------------------------------------------- */
+
+/* A soft radial-gradient sprite texture, reused across every particle
+   and glow in the scene so we never allocate more than one canvas. */
+function createGlowTexture() {
+  const size = 128;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0, "rgba(255,255,255,1)");
+  gradient.addColorStop(0.35, "rgba(255,255,255,0.5)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+/* Recursively grows a branching line structure — used as the hero's
+   procedural Yggdrasil silhouette instead of a flat illustration. */
+function buildTreeVertices() {
+  const verts = [];
+  const tmpEnd = new THREE.Vector3();
+  function branch(origin, dir, length, depth) {
+    if (depth <= 0 || length < 0.28) return;
+    tmpEnd.copy(dir).multiplyScalar(length).add(origin);
+    const end = tmpEnd.clone();
+    verts.push(origin.x, origin.y, origin.z, end.x, end.y, end.z);
+    const count = depth > 3 ? 2 : Math.random() > 0.45 ? 2 : 1;
+    for (let i = 0; i < count; i++) {
+      const spread = 0.5 + Math.random() * 0.45;
+      const newDir = dir.clone();
+      newDir.x += (Math.random() - 0.5) * spread;
+      newDir.y += 0.18 + Math.random() * 0.22;
+      newDir.z += (Math.random() - 0.5) * spread * 0.6;
+      newDir.normalize();
+      branch(end, newDir, length * 0.72, depth - 1);
+    }
+  }
+  branch(new THREE.Vector3(0, -7.5, -3), new THREE.Vector3(0, 1, 0), 3, 7);
+  return new Float32Array(verts);
+}
+
+/* ------------------------------------------------------------------
+   HeroScene — cosmic starfield, drifting dust, and a procedurally
+   grown Yggdrasil silhouette that answers to mouse parallax.
+------------------------------------------------------------------- */
+function HeroScene({ reducedMotion, parallax }) {
+  const mountRef = useRef(null);
+  const parallaxRef = useRef(parallax);
+  parallaxRef.current = parallax;
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return undefined;
+
+    let width = mount.clientWidth || 1;
+    let height = mount.clientHeight || 1;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (err) {
+      return undefined;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(48, width / height, 0.1, 100);
+    camera.position.set(0, 0.4, 13);
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height, false);
+    renderer.setClearColor(0x000000, 0);
+    mount.appendChild(renderer.domElement);
+
+    const glowTex = createGlowTexture();
+
+    // starfield
+    const starCount = 700;
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      starPos[i * 3] = (Math.random() - 0.5) * 42;
+      starPos[i * 3 + 1] = (Math.random() - 0.5) * 26;
+      starPos[i * 3 + 2] = (Math.random() - 0.5) * 30 - 6;
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({
+      size: 0.085, map: glowTex, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, color: 0x9aa3aa, opacity: 0.75,
+    });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    // drifting dust motes
+    const duskCount = 130;
+    const duskPos = new Float32Array(duskCount * 3);
+    const duskSpeed = new Float32Array(duskCount);
+    for (let i = 0; i < duskCount; i++) {
+      duskPos[i * 3] = (Math.random() - 0.5) * 17;
+      duskPos[i * 3 + 1] = (Math.random() - 0.5) * 11 - 2;
+      duskPos[i * 3 + 2] = (Math.random() - 0.5) * 9 + 3;
+      duskSpeed[i] = 0.14 + Math.random() * 0.3;
+    }
+    const duskGeo = new THREE.BufferGeometry();
+    duskGeo.setAttribute("position", new THREE.BufferAttribute(duskPos, 3));
+    const duskMat = new THREE.PointsMaterial({
+      size: 0.05, map: glowTex, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, color: 0xc9bfa8, opacity: 0.5,
+    });
+    const dusk = new THREE.Points(duskGeo, duskMat);
+    scene.add(dusk);
+
+    // procedural Yggdrasil silhouette
+    const treeGeo = new THREE.BufferGeometry();
+    treeGeo.setAttribute("position", new THREE.BufferAttribute(buildTreeVertices(), 3));
+    const treeMat = new THREE.LineBasicMaterial({ color: 0x6fa8b8, transparent: true, opacity: 0.22 });
+    const tree = new THREE.LineSegments(treeGeo, treeMat);
+    scene.add(tree);
+
+    const clock = new THREE.Clock();
+    let raf = null;
+
+    const renderFrame = () => {
+      const dt = clock.getDelta();
+      const t = clock.elapsedTime;
+      if (!reducedMotion) {
+        stars.rotation.y += dt * 0.006;
+        const arr = dusk.geometry.attributes.position.array;
+        for (let i = 0; i < duskCount; i++) {
+          arr[i * 3 + 1] += duskSpeed[i] * dt;
+          if (arr[i * 3 + 1] > 9) arr[i * 3 + 1] = -9;
+        }
+        dusk.geometry.attributes.position.needsUpdate = true;
+        tree.rotation.y = Math.sin(t * 0.05) * 0.05 + parallaxRef.current.x * 0.12;
+        tree.rotation.x = parallaxRef.current.y * 0.06;
+        camera.position.x += (parallaxRef.current.x * 0.7 - camera.position.x) * 0.03;
+        camera.position.y += (0.4 - parallaxRef.current.y * 0.5 - camera.position.y) * 0.03;
+        camera.lookAt(0, 0, 0);
+      }
+      renderer.render(scene, camera);
+      if (!reducedMotion) raf = requestAnimationFrame(renderFrame);
+    };
+    renderFrame();
+
+    const onResize = () => {
+      width = mount.clientWidth || 1;
+      height = mount.clientHeight || 1;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (raf) cancelAnimationFrame(raf);
+      renderer.dispose();
+      starGeo.dispose(); starMat.dispose();
+      duskGeo.dispose(); duskMat.dispose();
+      treeGeo.dispose(); treeMat.dispose();
+      glowTex.dispose();
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+    };
+  }, [reducedMotion]);
+
+  return <div ref={mountRef} className="three-hero-canvas" aria-hidden="true" />;
+}
+
+/* ------------------------------------------------------------------
+   YggdrasilScene — the nine realms rendered as a 3D constellation
+   around Midgard, raycast-picked on hover/click, with live labels
+   projected from world space onto the DOM.
+------------------------------------------------------------------- */
+function YggdrasilScene({ realms, activeRealm, onHover, onSelect, reducedMotion, isTouch }) {
+  const mountRef = useRef(null);
+  const labelRefs = useRef({});
+  const activeRef = useRef(activeRealm);
+
+  useEffect(() => {
+    activeRef.current = activeRealm;
+  }, [activeRealm]);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return undefined;
+
+    let width = mount.clientWidth || 1;
+    let height = mount.clientHeight || 1;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (err) {
+      return undefined;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    camera.position.set(0, 0.4, 11.5);
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height, false);
+    renderer.setClearColor(0x000000, 0);
+    mount.appendChild(renderer.domElement);
+
+    const glowTex = createGlowTexture();
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const mapPos = (r) => new THREE.Vector3(
+      (r.x / 100 - 0.5) * 9.2,
+      -(r.y / 100 - 0.5) * 9.2 + 1.3,
+      r.z || 0
+    );
+
+    const hubPos = mapPos(realms.find((r) => r.id === "midgard"));
+    const nodes = {};
+    const lines = {};
+    const sphereGeo = new THREE.SphereGeometry(0.15, 20, 20);
+
+    realms.forEach((r) => {
+      const pos = mapPos(r);
+      const isHub = r.id === "midgard";
+
+      if (!isHub) {
+        const geo = new THREE.BufferGeometry().setFromPoints([hubPos, pos]);
+        const mat = new THREE.LineBasicMaterial({ color: 0x9aa3aa, transparent: true, opacity: 0.32 });
+        const line = new THREE.Line(geo, mat);
+        group.add(line);
+        lines[r.id] = line;
+      }
+
+      const mesh = new THREE.Mesh(sphereGeo, new THREE.MeshBasicMaterial({ color: isHub ? 0xc9bfa8 : 0x6b7379 }));
+      mesh.position.copy(pos);
+      mesh.userData.id = r.id;
+      group.add(mesh);
+
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowTex, color: 0x6fa8b8, transparent: true, opacity: 0.45,
+        depthWrite: false, blending: THREE.AdditiveBlending,
+      }));
+      sprite.scale.set(0.85, 0.85, 1);
+      sprite.position.copy(pos);
+      group.add(sprite);
+
+      nodes[r.id] = { mesh, sprite, base: pos.clone(), phase: Math.random() * Math.PI * 2 };
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2(-10, -10);
+    let hoveredId = null;
+
+    const setHovered = (id) => {
+      if (id === hoveredId) return;
+      hoveredId = id;
+      mount.toggleAttribute("data-cursor-hover", !!id);
+      onHover(id);
+    };
+
+    const onPointerMove = (e) => {
+      const rect = mount.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    };
+    const onPointerLeave = () => {
+      pointer.x = -10; pointer.y = -10;
+      setHovered(null);
+    };
+    const onClick = (e) => {
+      const rect = mount.getBoundingClientRect();
+      const tapPointer = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      raycaster.setFromCamera(tapPointer, camera);
+      const hit = raycaster.intersectObjects(Object.values(nodes).map((n) => n.mesh));
+      if (hit.length) onSelect(hit[0].object.userData.id);
+    };
+
+    if (!isTouch) {
+      mount.addEventListener("pointermove", onPointerMove);
+      mount.addEventListener("pointerleave", onPointerLeave);
+    }
+    mount.addEventListener("click", onClick);
+
+    const clock = new THREE.Clock();
+    let raf = null;
+
+    const renderFrame = () => {
+      clock.getDelta();
+      const t = clock.elapsedTime;
+
+      Object.values(nodes).forEach(({ mesh, sprite, base, phase }) => {
+        const floatY = reducedMotion ? 0 : Math.sin(t * 0.6 + phase) * 0.08;
+        mesh.position.y = base.y + floatY;
+        sprite.position.y = mesh.position.y;
+      });
+
+      if (!reducedMotion) group.rotation.y = Math.sin(t * 0.06) * 0.05;
+
+      if (!isTouch) {
+        raycaster.setFromCamera(pointer, camera);
+        const hit = raycaster.intersectObjects(Object.values(nodes).map((n) => n.mesh));
+        setHovered(hit.length ? hit[0].object.userData.id : null);
+      }
+
+      Object.entries(nodes).forEach(([id, { sprite }]) => {
+        const isActive = id === activeRef.current;
+        const targetScale = isActive ? 1.7 : 0.85;
+        sprite.scale.x += (targetScale - sprite.scale.x) * 0.15;
+        sprite.scale.y += (targetScale - sprite.scale.y) * 0.15;
+        sprite.material.opacity += ((isActive ? 0.85 : 0.4) - sprite.material.opacity) * 0.15;
+      });
+      Object.entries(lines).forEach(([id, line]) => {
+        const isActive = id === activeRef.current;
+        line.material.opacity += ((isActive ? 0.85 : 0.28) - line.material.opacity) * 0.15;
+        line.material.color.setHex(isActive ? 0x6fa8b8 : 0x9aa3aa);
+      });
+
+      Object.entries(nodes).forEach(([id, { mesh }]) => {
+        const label = labelRefs.current[id];
+        if (!label) return;
+        const v = mesh.position.clone().project(camera);
+        const x = (v.x * 0.5 + 0.5) * width;
+        const y = (-v.y * 0.5 + 0.5) * height;
+        label.style.transform = `translate(${x}px, ${y}px) translate(-50%, 14px)`;
+      });
+
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(renderFrame);
+    };
+    renderFrame();
+
+    const onResize = () => {
+      width = mount.clientWidth || 1;
+      height = mount.clientHeight || 1;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (!isTouch) {
+        mount.removeEventListener("pointermove", onPointerMove);
+        mount.removeEventListener("pointerleave", onPointerLeave);
+      }
+      mount.removeEventListener("click", onClick);
+      if (raf) cancelAnimationFrame(raf);
+      sphereGeo.dispose();
+      glowTex.dispose();
+      Object.values(lines).forEach((l) => { l.geometry.dispose(); l.material.dispose(); });
+      Object.values(nodes).forEach((n) => { n.mesh.material.dispose(); n.sprite.material.dispose(); });
+      renderer.dispose();
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [realms, reducedMotion, isTouch]);
+
+  return (
+    <div ref={mountRef} className="ygg-3d-mount" data-cursor-hover>
+      {realms.map((r) => (
+        <div
+          key={r.id}
+          ref={(el) => { labelRefs.current[r.id] = el; }}
+          className={`realm-label-3d ${activeRealm === r.id ? "active" : ""}`}
+        >
+          {r.name}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   ParticleField3D — a small reusable rising-particle scene, used for
+   the Ragnarök ember field.
+------------------------------------------------------------------- */
+function ParticleField3D({ count = 90, color = 0xc4622d, size = 0.05, riseHeight = 9, spread = { x: 14, y: 9, z: 6 }, speedRange = [0.4, 1], opacity = 0.75, reducedMotion, className = "" }) {
+  const mountRef = useRef(null);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return undefined;
+
+    let width = mount.clientWidth || 1;
+    let height = mount.clientHeight || 1;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (err) {
+      return undefined;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 60);
+    camera.position.set(0, 0, 10);
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height, false);
+    renderer.setClearColor(0x000000, 0);
+    mount.appendChild(renderer.domElement);
+
+    const glowTex = createGlowTexture();
+    const positions = new Float32Array(count * 3);
+    const speeds = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * spread.x;
+      positions[i * 3 + 1] = Math.random() * riseHeight - riseHeight / 2;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * spread.z;
+      speeds[i] = speedRange[0] + Math.random() * (speedRange[1] - speedRange[0]);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({
+      size, map: glowTex, color, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, opacity,
+    });
+    const points = new THREE.Points(geo, mat);
+    scene.add(points);
+
+    const clock = new THREE.Clock();
+    let raf = null;
+
+    const renderFrame = () => {
+      const dt = clock.getDelta();
+      if (!reducedMotion) {
+        const arr = geo.attributes.position.array;
+        for (let i = 0; i < count; i++) {
+          arr[i * 3 + 1] += speeds[i] * dt;
+          arr[i * 3] += Math.sin(clock.elapsedTime * 0.6 + i) * dt * 0.05;
+          if (arr[i * 3 + 1] > riseHeight / 2) arr[i * 3 + 1] = -riseHeight / 2;
+        }
+        geo.attributes.position.needsUpdate = true;
+      }
+      renderer.render(scene, camera);
+      if (!reducedMotion) raf = requestAnimationFrame(renderFrame);
+    };
+    renderFrame();
+
+    const onResize = () => {
+      width = mount.clientWidth || 1;
+      height = mount.clientHeight || 1;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (raf) cancelAnimationFrame(raf);
+      geo.dispose(); mat.dispose(); glowTex.dispose();
+      renderer.dispose();
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+    };
+  }, [count, color, size, riseHeight, spread.x, spread.y, spread.z, speedRange[0], speedRange[1], opacity, reducedMotion]);
+
+  return <div ref={mountRef} className={className} aria-hidden="true" />;
+}
+
+export default function Ragnarok() {
   const reducedMotion = useReducedMotion();
   const isTouch = useIsTouch();
   const [scrolled, setScrolled] = useState(false);
@@ -140,31 +612,6 @@ export default function HomePage() {
   const [runeWord, setRuneWord] = useState("");
   const sectionRefs = useRef({});
   const rafRef = useRef(null);
-
-  const particles = useMemo(() => {
-    const count = isTouch ? 16 : 42;
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: 1 + Math.random() * 2.6,
-      duration: 14 + Math.random() * 22,
-      delay: Math.random() * -30,
-      drift: (Math.random() - 0.5) * 60,
-      opacity: 0.15 + Math.random() * 0.45,
-    }));
-  }, [isTouch]);
-
-  const emberParticles = useMemo(() => {
-    const count = isTouch ? 10 : 26;
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      size: 1.5 + Math.random() * 2.5,
-      duration: 3 + Math.random() * 4,
-      delay: Math.random() * -6,
-    }));
-  }, [isTouch]);
 
   /* Scroll tracking: navbar state, active section, progress bar */
   useEffect(() => {
@@ -243,7 +690,7 @@ export default function HomePage() {
     <div className={`rag-root ${isTouch ? "is-touch" : ""}`}>
       <style>{`
         .rag-root {
-          --void: #050505;
+          --void: #07090B;
           --deep: #0D1114;
           --panel: #111619;
           --parchment: #C9BFA8;
@@ -344,18 +791,8 @@ export default function HomePage() {
             radial-gradient(ellipse 90% 60% at 50% 100%, rgba(138,90,52,0.10), transparent 70%),
             var(--void);
         }
-        .hero-stars {
-          position: absolute; inset: 0;
-          background-image: radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.5), transparent),
-            radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.35), transparent),
-            radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.4), transparent),
-            radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.25), transparent),
-            radial-gradient(1px 1px at 10% 65%, rgba(255,255,255,0.3), transparent);
-          background-size: 100% 100%;
-          opacity: 0.7;
-        }
-        .hero-fog { position: absolute; inset: -10%; pointer-events: none; }
+        .three-hero-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        .hero-fog { position: absolute; inset: -10%; pointer-events: none; z-index: 2; }
         .fog-layer {
           position: absolute; inset: 0; opacity: 0.35; filter: blur(30px);
           background: linear-gradient(90deg, transparent, rgba(111,168,184,0.08), transparent 70%);
@@ -365,28 +802,7 @@ export default function HomePage() {
         .fog-layer.f3 { animation: driftFog 120s linear infinite; top: 55%; opacity: 0.18; }
         @keyframes driftFog { from { transform: translateX(-15%); } to { transform: translateX(15%); } }
 
-        .yggdrasil-silhouette {
-          position: absolute; bottom: 0; left: 50%; width: min(1100px, 140vw); height: 78vh;
-          transform: translateX(-50%);
-          opacity: 0.5;
-          animation: treeBreathe 12s ease-in-out infinite;
-        }
-        @keyframes treeBreathe {
-          0%, 100% { opacity: 0.42; filter: drop-shadow(0 0 30px rgba(111,168,184,0.05)); }
-          50% { opacity: 0.55; filter: drop-shadow(0 0 46px rgba(111,168,184,0.12)); }
-        }
-
-        .particle-field { position: absolute; inset: 0; pointer-events: none; }
-        .particle {
-          position: absolute; border-radius: 50%; background: var(--parchment);
-          animation-name: floatParticle; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
-        }
-        @keyframes floatParticle {
-          0% { transform: translate(0, 0); }
-          50% { transform: translate(var(--drift), -40px); }
-          100% { transform: translate(0, 0); }
-        }
-
+        .rune-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
         .rune-flicker {
           position: absolute; font-family: var(--font-display); color: var(--ice);
           opacity: 0; animation: runeFlicker 9s ease-in-out infinite;
@@ -479,28 +895,16 @@ export default function HomePage() {
           .reveal { transition: none; opacity: 1; transform: none; }
         }
 
-        /* ---------- yggdrasil / realms ---------- */
+        /* ---------- yggdrasil / realms (three.js) ---------- */
         .yggdrasil-wrap { position: relative; max-width: 900px; margin: 0 auto; aspect-ratio: 1/1.05; }
-        .yggdrasil-svg { width: 100%; height: 100%; overflow: visible; }
-        .yggdrasil-svg .link { stroke: var(--line); stroke-width: 1; fill: none; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
-        .yggdrasil-svg .link.lit { stroke: var(--ice); stroke-width: 1.4; }
-        .realm-node {
-          position: absolute; transform: translate(-50%, -50%); cursor: pointer;
-          display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        .ygg-3d-mount { position: absolute; inset: 0; }
+        .ygg-3d-mount canvas { width: 100% !important; height: 100% !important; display: block; }
+        .realm-label-3d {
+          position: absolute; left: 0; top: 0; pointer-events: none; white-space: nowrap;
+          font-size: 0.62rem; letter-spacing: 0.14em; color: var(--silver);
+          transition: color 0.3s ease; will-change: transform;
         }
-        .realm-dot {
-          width: 12px; height: 12px; border-radius: 50%; background: var(--stone);
-          border: 1px solid var(--line); transition: all 0.4s ease;
-          box-shadow: 0 0 0 rgba(111,168,184,0);
-        }
-        .realm-node:hover .realm-dot, .realm-node.active .realm-dot {
-          background: var(--ice); box-shadow: 0 0 24px rgba(111,168,184,0.6); transform: scale(1.4);
-        }
-        .realm-label {
-          font-size: 0.62rem; letter-spacing: 0.14em; color: var(--silver); white-space: nowrap;
-          transition: color 0.3s ease;
-        }
-        .realm-node:hover .realm-label, .realm-node.active .realm-label { color: var(--parchment); }
+        .realm-label-3d.active { color: var(--parchment); }
 
         .realm-panel {
           margin: 3rem auto 0; max-width: 30rem; text-align: center; min-height: 6.5rem;
@@ -601,9 +1005,8 @@ export default function HomePage() {
           background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(196,98,45,0.10), transparent 65%), var(--void);
           position: relative; overflow: hidden;
         }
-        .ember-field { position: absolute; inset: 0; pointer-events: none; }
-        .ember { position: absolute; bottom: -10px; border-radius: 50%; background: var(--ember); animation-name: emberRise; animation-timing-function: ease-in; animation-iteration-count: infinite; }
-        @keyframes emberRise { 0% { transform: translateY(0); opacity: 0.9; } 100% { transform: translateY(-90vh); opacity: 0; } }
+        .ember-canvas { position: absolute; inset: 0; pointer-events: none; }
+        .ember-canvas canvas { width: 100% !important; height: 100% !important; display: block; }
 
         .rag-timeline { max-width: 26rem; margin: 0 auto; text-align: center; }
         .rag-stage { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.08em; color: var(--stone); padding: 1rem 0; transition: color 0.6s ease, transform 0.6s ease; }
@@ -644,7 +1047,7 @@ export default function HomePage() {
           .god-name { writing-mode: horizontal-tb !important; font-size: 1.8rem !important; }
           .god-meta { max-height: none !important; opacity: 1 !important; }
           .yggdrasil-wrap { aspect-ratio: 1/1.3; }
-          .realm-label { font-size: 0.55rem; }
+          .realm-label-3d { font-size: 0.55rem; }
         }
       `}</style>
 
@@ -693,46 +1096,15 @@ export default function HomePage() {
 
       {/* ---------------- HERO ---------------- */}
       <section className="hero" ref={registerSection("hero")}>
-        <div className="hero-stars" />
         <div className="hero-fog">
           <div className="fog-layer f1" />
           <div className="fog-layer f2" />
           <div className="fog-layer f3" />
         </div>
 
-        <svg
-          className="yggdrasil-silhouette"
-          viewBox="0 0 600 700"
-          style={{ transform: `translate(calc(-50% + ${parallax.x * 10}px), ${parallax.y * 6}px)` }}
-        >
-          <defs>
-            <linearGradient id="treeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0D1114" />
-              <stop offset="100%" stopColor="#07090B" />
-            </linearGradient>
-          </defs>
-          <path d="M300 700 L300 420 M300 420 L180 260 M300 420 L420 260 M300 420 L300 180 M180 260 L100 140 M180 260 L230 120 M420 260 L500 140 M420 260 L370 120 M300 180 L300 40 M300 180 L230 60 M300 180 L370 60"
-            stroke="rgba(154,163,170,0.25)" strokeWidth="3" fill="none" strokeLinecap="round" />
-        </svg>
+        <HeroScene reducedMotion={reducedMotion} parallax={parallax} />
 
-        <div className="particle-field" aria-hidden="true">
-          {particles.map((p) => (
-            <div
-              key={p.id}
-              className="particle"
-              style={{
-                left: `${p.left}%`,
-                top: `${p.top}%`,
-                width: p.size,
-                height: p.size,
-                opacity: p.opacity,
-                "--drift": `${p.drift}px`,
-                animationDuration: reducedMotion ? "0s" : `${p.duration}s`,
-                animationDelay: `${p.delay}s`,
-                transform: `translate(${parallax.x * 14}px, ${parallax.y * 14}px)`,
-              }}
-            />
-          ))}
+        <div className="rune-overlay" aria-hidden="true">
           {!reducedMotion && (
             <>
               <span className="rune-flicker" style={{ left: "18%", top: "30%", fontSize: "2.4rem", animationDelay: "0s" }}>ᛟ</span>
@@ -770,32 +1142,14 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="yggdrasil-wrap" threshold={0.1}>
-          <svg className="yggdrasil-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            {REALMS.map((r) =>
-              r.id !== "midgard" ? (
-                <line
-                  key={r.id}
-                  className={`link ${activeRealm === r.id ? "lit" : ""}`}
-                  x1="50" y1="46" x2={r.x} y2={r.y}
-                />
-              ) : null
-            )}
-          </svg>
-          {REALMS.map((r) => (
-            <div
-              key={r.id}
-              className={`realm-node ${activeRealm === r.id ? "active" : ""}`}
-              style={{ left: `${r.x}%`, top: `${r.y}%` }}
-              onMouseEnter={() => setActiveRealm(r.id)}
-              onFocus={() => setActiveRealm(r.id)}
-              onClick={() => setActiveRealm(r.id)}
-              tabIndex={0}
-              data-cursor-hover
-            >
-              <div className="realm-dot" />
-              <div className="realm-label">{r.name}</div>
-            </div>
-          ))}
+          <YggdrasilScene
+            realms={REALMS}
+            activeRealm={activeRealm}
+            onHover={setActiveRealm}
+            onSelect={setActiveRealm}
+            reducedMotion={reducedMotion}
+            isTouch={isTouch}
+          />
         </Reveal>
 
         {activeRealmData ? (
@@ -805,7 +1159,7 @@ export default function HomePage() {
             <div className="rp-people">{activeRealmData.people}</div>
           </div>
         ) : (
-          <p className="realm-hint">Hover or select a realm to learn its story</p>
+          <p className="realm-hint">Move across the tree to reveal a realm</p>
         )}
       </section>
 
@@ -915,21 +1269,17 @@ export default function HomePage() {
 
       {/* ---------------- RAGNARÖK ---------------- */}
       <section className="section ragnarok-section" id="ragnarok" ref={registerSection("ragnarok")}>
-        <div className="ember-field" aria-hidden="true">
-          {!reducedMotion && emberParticles.map((e) => (
-            <div
-              key={e.id}
-              className="ember"
-              style={{
-                left: `${e.left}%`,
-                width: e.size,
-                height: e.size,
-                animationDuration: `${e.duration}s`,
-                animationDelay: `${e.delay}s`,
-              }}
-            />
-          ))}
-        </div>
+        <ParticleField3D
+          className="ember-canvas"
+          count={isTouch ? 40 : 90}
+          color={0xc4622d}
+          size={0.055}
+          riseHeight={10}
+          spread={{ x: 15, y: 10, z: 6 }}
+          speedRange={[0.5, 1.2]}
+          opacity={0.8}
+          reducedMotion={reducedMotion}
+        />
 
         <Reveal className="section-head">
           <div className="section-eyebrow">ᚾ THE FATE OF THE GODS ᚾ</div>
