@@ -7,8 +7,14 @@
     justify-content: center;
     text-align: center;
     padding: 8rem 5vw 4rem;
-    overflow: hidden;
-    background: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.9), var(--rag-void) 80%);
+
+    overflow: visible;
+
+    background: radial-gradient(
+        circle at 50% 30%,
+        rgba(15, 23, 42, 0.9),
+        var(--rag-void) 80%
+    );
 }
 
 .hero-stars {
@@ -25,14 +31,19 @@
 }
 
 .hero-tree-wrap {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 50%;
+
     width: min(1000px, 130vw);
     height: 80vh;
+
     pointer-events: none;
     z-index: 1;
     will-change: transform;
+
+    /* Keep it attached to the viewport */
+    transform-origin: center bottom;
 }
 
 .hero-tree-svg {

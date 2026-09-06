@@ -40,7 +40,6 @@
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
-    isolation: isolate;
     --px: 0;
     --py: 0;
     -webkit-font-smoothing: antialiased;
@@ -58,10 +57,17 @@
 /* ---------- Ambient Background Glows & Noise ---------- */
 .rag-bg-glows {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
+
+    /* Keep the background attached to the viewport */
+    transform: translateZ(0);
 }
 
 .bg-aurora {
@@ -99,10 +105,21 @@
 
 .rag-vignette {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
     pointer-events: none;
     z-index: 1;
-    background: radial-gradient(circle at center, transparent 40%, rgba(5, 7, 10, 0.8) 100%);
+
+    background: radial-gradient(
+        circle at center,
+        transparent 40%,
+        rgba(5, 7, 10, 0.8) 100%
+    );
+
+    transform: translateZ(0);
 }
 
 .rag-scroll-progress {
@@ -262,7 +279,6 @@
 /* ---------- Shared Section Styling ---------- */
 .rag-section {
     position: relative;
-    z-index: 2;
     padding: 8rem 6vw;
 }
 
