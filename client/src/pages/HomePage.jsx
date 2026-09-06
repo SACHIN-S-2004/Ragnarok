@@ -111,7 +111,36 @@ export default function RagnarokLandingPage({ assetBase = "./assets" }) {
     ["05", "THE ÆSIR–VANIR WAR", "Old wounds ignite and the worlds change hands."],
     ["06", "RAGNARÖK", "The final battle ends one world and begins another."],
   ];
-  const runeMap = { A: "ᚨ", B: "ᛒ", C: "ᚲ", D: "ᛞ", E: "ᛖ", F: "ᚠ", G: "ᚷ", H: "ᚺ", I: "ᛁ", J: "ᛃ", K: "ᚲ", L: "ᛚ", M: "ᛗ", N: "ᚾ", O: "ᛟ", P: "ᛈ", Q: "ᚲ", R: "ᚱ", S: "ᛊ", T: "ᛏ", U: "ᚢ", V: "ᚹ", W: "ᚹ", X: "ᛪ", Y: "ᛃ", Z: "ᛉ" };
+  const runeMap = {
+    A: "ᚨ",
+    B: "ᛒ",
+    C: "ᚲ",
+    D: "ᛞ",
+    E: "ᛖ",
+    F: "ᚠ",
+    G: "ᚷ",
+    H: "ᚺ",
+    I: "ᛁ",
+    J: "ᛃ",
+    K: "ᚲ",
+    L: "ᛚ",
+    M: "ᛗ",
+    N: "ᚾ",
+    O: "ᛟ",
+    P: "ᛈ",
+    Q: "ᚲ",
+    R: "ᚱ",
+    S: "ᛊ",
+    T: "ᛏ",
+    U: "ᚢ",
+    V: "ᚹ",
+    W: "ᚹ",
+    X: "ᚲᛊ",
+    Y: "ᛃ",
+    Z: "ᛉ",
+    " ": " "
+  };
+
   const runes = useMemo(() => word.toUpperCase().split("").map((letter) => runeMap[letter] || letter).join("  "), [word]);
   const scrollTo = (id) => { document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); setMenuOpen(false); };
 
