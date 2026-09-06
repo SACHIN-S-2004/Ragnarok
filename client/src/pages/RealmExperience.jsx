@@ -83,11 +83,14 @@ const REALMS = {
       known: ["VALHALLA", "BIFRÖST", "ODIN", "THOR"],
       position: "UPPER REALM",
     },
+    lore: "Asgard stands as the gilded citadel of the Æsir, a fortress of divine majestic architecture carved high upon the upper limbs of Yggdrasil. Protected by impenetrable walls and accessed only by Bifröst, Asgard is the heart of celestial governance and epic sagas.",
+    artifacts: ["MJÖLNIR", "GUNGNIR", "DRAUPNIR", "GJALLARHORN"],
     places: [
-      { name: "VALHALLA", x: 50, y: 20, desc: "The hall of the slain, where Odin gathers warriors chosen for Ragnarök." },
-      { name: "BIFRÖST", x: 18, y: 62, desc: "The burning rainbow bridge connecting Asgard to Midgard, guarded by Heimdall." },
-      { name: "HLIÐSKJÁLF", x: 78, y: 68, desc: "Odin's high seat, from which he can see into all the Nine Realms." },
-      { name: "IÐAVÖLLR", x: 50, y: 88, desc: "A plain at the center of Asgard where the gods once met and played at tafl." },
+      { name: "VALHALLA", x: 50, y: 18, desc: "The Golden Hall of 540 doors, where Einherjar feast on Sæhrímnir and drink mead from Heidrun." },
+      { name: "BIFRÖST", x: 18, y: 62, desc: "The glowing rainbow bridge of shimmering ether, guarded continuously by Heimdall." },
+      { name: "HLIÐSKJÁLF", x: 82, y: 65, desc: "Odin's high throne atop Valaskjálf, offering sight across every realm and secret." },
+      { name: "BILSKIRNIR", x: 30, y: 40, desc: "Thor's massive 540-room palace in Þrúðvangr, the largest hall in Asgard." },
+      { name: "IÐAVÖLLR", x: 50, y: 88, desc: "The central sacred plain where gods gather in council and play golden board games." },
     ],
     inhabitants: [
       { name: "ODIN", role: "ALLFATHER", desc: "Ruler of Asgard, seeker of wisdom, who gave an eye for knowledge at Mímir's well." },
@@ -133,27 +136,32 @@ const REALMS = {
     facts: {
       type: "DIVINE / ELDER",
       beings: "VANIR",
-      known: ["FREYR", "FREYJA", "NJÖRД", "SEIÐR"],
+      known: ["FREYR", "FREYJA", "NJÖRÐ", "SEIÐR"],
       position: "OUTER REALM",
     },
+    lore: "Vanaheim is an unbridled realm of verdant wilderness, ancient rivers, and primal magic. Before the truce with Asgard, the Vanir ruled this realm through deep communion with nature and the practice of Seiðr—a potent sorcery capable of weaving fate itself.",
+    artifacts: ["SKÍÐBLAÐNIR", "BRÍSINGAMEN", "FALCON CLOAK"],
     places: [
-      { name: "NJÖRÐ'S HALL", x: 30, y: 30, desc: "A dwelling associated with the sea-god Njörð, once hostage-king of the Vanir." },
-      { name: "THE FERTILE GROVES", x: 68, y: 40, desc: "Groves said to flourish year-round under the Vanir's old magic." },
-      { name: "THE SEIÐR CIRCLES", x: 50, y: 72, desc: "Sites tied to seiðr, a form of magic the Vanir taught to Odin himself." },
+      { name: "NÓATÚN", x: 28, y: 32, desc: "Njörð's hall of ships by the sea, where wave-song fills the high wooden arches." },
+      { name: "SESS RÚMNIR", x: 72, y: 38, desc: "Freyja's magnificent hall within Fólkvangr, receiving half of all slain warriors." },
+      { name: "THE FERTILE GROVES", x: 62, y: 64, desc: "Eternal groves said to blossom with golden flora under Vanir blessings." },
+      { name: "THE SEIÐR CIRCLES", x: 45, y: 82, desc: "Sacred stone monoliths where fate-weavers perform cosmic chants." },
     ],
     inhabitants: [
-      { name: "FREYR", role: "GOD OF HARVEST", desc: "God of fertility and peace, holder of the ship Skíðblaðnir." },
-      { name: "FREYJA", role: "GODDESS OF SEIÐR", desc: "Mistress of love, war and magic, keeper of the falcon cloak." },
-      { name: "NJÖRÐ", role: "GOD OF THE SEA", desc: "Father of Freyr and Freyja, associated with wind and coastal wealth." },
+      { name: "FREYR", role: "LORD OF HARVEST & SUNSHINE", desc: "Master of Skíðblaðnir and keeper of Gullinbursti, bringing abundance and peace across realms." },
+      { name: "FREYJA", role: "LADY OF SEIÐR & WAR", desc: "Ruler of Fólkvangr, mistress of magic and love, who claims her pick of the heroic dead." },
+      { name: "NJÖRÐ", role: "GOD OF THE WINDS & SEA", desc: "Patron of seafarers and coastal wealth, ruling from his ocean hall Nóatún." },
+      { name: "KVASIR", role: "BEING OF ABSOLUTE WISDOM", desc: "Created from the combined spittle of Æsir and Vanir to seal their peace, possessing infinite counsel." },
     ],
     connections: [
       { to: "ASGARD", label: "THE ÆSIR–VANIR WAR", desc: "Hostages were exchanged between the two divine tribes after the truce." },
       { to: "ALFHEIM", label: "SHARED BORDERLANDS", desc: "Given to Freyr as a tooth-gift, tying the two realms closely together." },
     ],
     myths: [
-      { title: "THE ÆSIR–VANIR WAR", desc: "The first war in the cosmos, fought to a stalemate between two divine peoples." },
-      { title: "THE HOSTAGE EXCHANGE", desc: "Njörð, Freyr and Freyja come to live among the Æsir as pledges of peace." },
-      { title: "THE TEACHING OF SEIÐR", desc: "Freyja teaches Odin the Vanir's magic, reshaping his own power." },
+      { title: "THE ÆSIR–VANIR WAR", desc: "The first war in the cosmos, fought to a stalemate before an eternal truce was forged." },
+      { title: "THE HOSTAGE EXCHANGE", desc: "Njörð, Freyr, and Freyja came to live among the Æsir as sacred pledges of harmony." },
+      { title: "THE CREATION OF KVASIR", desc: "The gods created the wisest of beings from their peace ritual spittle." },
+      { title: "THE TEACHING OF SEIÐR", desc: "Freyja imparted the secret arts of fate magic to Odin in exchange for realm wisdom." },
     ],
     lives: ["GODS", "CREATURES"],
   },
@@ -183,21 +191,26 @@ const REALMS = {
       known: ["FREYR", "LIGHT ELVES", "TOOTH-GIFT"],
       position: "UPPER REALM",
     },
+    lore: "Alfheim floats like a crystalline sanctuary in the upper atmospheric canopy of Yggdrasil. Pure light refracts through silver spires, and its inhabitants weave subtle glimmers into garments that never tarnish.",
+    artifacts: ["SOLAR CRYSTAL", "ELVEN HARP OF LÓRIEN", "FREYR'S TOOTH-RING"],
     places: [
-      { name: "THE LUMINOUS COURTS", x: 44, y: 24, desc: "Described only briefly in the sources, imagined as halls of pale, constant light." },
-      { name: "FREYR'S GIFT-LANDS", x: 70, y: 58, desc: "The territory said to have been given over to Freyr's keeping." },
+      { name: "THE LUMINOUS COURTS", x: 44, y: 24, desc: "Palaces crafted from translucent alabaster that shimmer under celestial auroras." },
+      { name: "FREYR'S GIFT-LANDS", x: 70, y: 58, desc: "The sacred territory granted to Lord Freyr when he cut his first tooth." },
+      { name: "VALE OF PRISMATIC MISTS", x: 25, y: 75, desc: "A valley where light splits into endless rainbows that sing in harmonic frequencies." },
     ],
     inhabitants: [
-      { name: "THE LJÓSÁLFAR", role: "LIGHT ELVES", desc: "Beings the Prose Edda says are fairer to look upon than the sun." },
-      { name: "FREYR", role: "KEEPER OF ALFHEIM", desc: "Vanir god given lordship of Alfheim as an infant's tooth-gift." },
+      { name: "THE LJÓSÁLFAR", role: "LIGHT ELVES", desc: "Ethereal beings fairer than the sun, guardians of ancient stellar grace and inspiration." },
+      { name: "FREYR", role: "LORD & KEEPER OF ALFHEIM", desc: "Vanir god given divine sovereignty over Alfheim, bringing warmth and abundance." },
+      { name: "DAEG & NÓTT", role: "DAY AND NIGHT WEAVERS", desc: "Celestial spriggan guardians who guide the sun horse Skinfaxi across the skies." },
     ],
     connections: [
       { to: "VANAHEIM", label: "SHARED BORDERLANDS", desc: "Alfheim's ties to the Vanir run through Freyr's dual lordship." },
       { to: "ASGARD", label: "UPPER-REALM PROXIMITY", desc: "Grouped among the realms of the sky in later scholarly reconstructions." },
     ],
     myths: [
-      { title: "THE TOOTH-GIFT", desc: "Freyr is given Alfheim as a gift upon cutting his first tooth." },
-      { title: "ON THE NATURE OF ELVES", desc: "Snorri's Prose Edda distinguishes light elves from their dark counterparts." },
+      { title: "THE TOOTH-GIFT", desc: "Freyr is given Alfheim as a gift upon cutting his first tooth, uniting light elves and fertility gods." },
+      { title: "ON THE NATURE OF ELVES", desc: "Snorri's Prose Edda distinguishes light elves from dark subterranean artisans." },
+      { title: "THE WEAVING OF SOLAR LIGHT", desc: "Elven artisans forge sunlight into thread used for divine banners." },
     ],
     lives: ["ELVES", "GODS"],
   },
@@ -227,14 +240,18 @@ const REALMS = {
       known: ["JÖRMUNGANDR", "YGGDRASIL'S ROOTS", "ASK & EMBLA"],
       position: "MIDDLE REALM",
     },
+    lore: "Midgard sits at the geometric center of the cosmos, forged from the body of the primordial giant Ymir. Encircling its continents is a fathomless ocean where Jörmungandr sleeps, holding the world together until its jaws unleash Ragnarök.",
+    artifacts: ["MEAD OF POETRY", "RING OF HORIK", "RUNESTONE OF JELLING"],
     places: [
-      { name: "THE ENCIRCLING SEA", x: 20, y: 30, desc: "Waters said to hold Jörmungandr, the World Serpent, coiled around Midgard." },
-      { name: "UTGARD'S EDGE", x: 78, y: 32, desc: "The rough border where human lands give way to Jötunheim." },
-      { name: "THE ROOT OF YGGDRASIL", x: 50, y: 76, desc: "One of the three roots of the world tree is said to reach into Midgard." },
+      { name: "THE ENCIRCLING SEA", x: 20, y: 30, desc: "Waters said to hold Jörmungandr, the World Serpent, coiled tail-in-mouth." },
+      { name: "UTGARD'S EDGE", x: 78, y: 32, desc: "The rough borderland where human farms give way to icy giant wastes." },
+      { name: "URÐARBRUNNR ROOT", x: 50, y: 76, desc: "The great root of Yggdrasil anchoring Midgard to the Well of Fate." },
+      { name: "MANHEIMR PLAINS", x: 45, y: 50, desc: "Hills and fjords where mortal chieftains raise longhouses and runestones." },
     ],
     inhabitants: [
-      { name: "HUMANKIND", role: "MORTALS", desc: "Descended, in the myths, from Ask and Embla — the first man and woman." },
-      { name: "ASK & EMBLA", role: "THE FIRST HUMANS", desc: "Shaped from driftwood and given life, breath and senses by three gods." },
+      { name: "HUMANKIND", role: "MORTALS", desc: "Descended from Ask and Embla, striving under the gaze of gods and giants." },
+      { name: "ASK & EMBLA", role: "THE FIRST HUMANS", desc: "Shaped from ash and elm driftwood and endowed with spirit by Odin, Vili, and Vé." },
+      { name: "JÖRMUNGANDR", role: "THE WORLD SERPENT", desc: "Loki's colossal son whose coils span the circumference of the earthly sea." },
     ],
     connections: [
       { to: "ASGARD", label: "BIFRÖST", desc: "The rainbow bridge associated with travel between realms." },
@@ -242,9 +259,10 @@ const REALMS = {
       { to: "HEL", label: "THE HELWAY", desc: "The road the dead are said to travel downward and northward." },
     ],
     myths: [
-      { title: "THE SHAPING OF ASK & EMBLA", desc: "Odin and his brothers give life, breath and reason to the first humans." },
-      { title: "THOR'S JOURNEY TO UTGARD", desc: "Thor and his companions are tested and humbled in a giant's stronghold." },
-      { title: "THE FISHING OF JÖRMUNGANDR", desc: "Thor nearly hauls the World Serpent from the sea." },
+      { title: "THE SHAPING OF ASK & EMBLA", desc: "Odin and his brothers give life, breath, and reason to the first human couple." },
+      { title: "THOR'S JOURNEY TO UTGARD", desc: "Thor and his companions are tested and humbled in Utgarða-Loki's stronghold." },
+      { title: "THE FISHING OF JÖRMUNGANDR", desc: "Thor nearly hauls the World Serpent from the deep ocean using an ox head as bait." },
+      { title: "THE BINDING OF THE SERPENT", desc: "The gods cast Jörmungandr into the sea where it grew to encircle the world." },
     ],
     lives: ["HUMANS", "CREATURES"],
   },
@@ -274,24 +292,28 @@ const REALMS = {
       known: ["UTGARÐA-LOKI", "SKRYMIR", "YMIR'S BONES"],
       position: "OUTER REALM",
     },
+    lore: "Jötunheim is a wild realm of titanic frozen peaks, jagged granite chasms, and primeval wilderness. Here dwell frost and mountain giants whose memories stretch back to before the Æsir carved order into chaos.",
+    artifacts: ["SKRYMIR'S GLOVE", "MEAD HORN OF UTGARD", "SKAÐI'S BOW OF FROST"],
     places: [
-      { name: "UTGARD", x: 60, y: 20, desc: "A giant stronghold at the far edge of the world, seat of Utgarða-Loki." },
-      { name: "THE IRON WOOD", x: 24, y: 55, desc: "A forest home to giantess-kind, said to raise monstrous offspring." },
-      { name: "THE FROZEN RANGES", x: 78, y: 78, desc: "Mountain country described as too vast for a mortal eye to measure." },
+      { name: "UTGARD", x: 60, y: 20, desc: "A colossal giant fortress where illusions distort space, size, and perception." },
+      { name: "THE IRON WOOD", x: 24, y: 55, desc: "A dark forest of iron-leafed trees home to giantesses and wolf-kin bred by Angrboða." },
+      { name: "THE FROZEN RANGES", x: 78, y: 78, desc: "Monolithic ice peaks where avalanche storms echo like giant laughter." },
+      { name: "GASTMIR'S CAVE", x: 42, y: 38, desc: "Subterranean cavern where old giant sorcerers store ancient cosmic runes." },
     ],
     inhabitants: [
-      { name: "UTGARÐA-LOKI", role: "GIANT-KING", desc: "A giant lord who humbles Thor's company through illusion, not force." },
-      { name: "SKRYMIR", role: "WANDERING GIANT", desc: "A giant whose enormous scale bewilders Thor on the road to Utgard." },
-      { name: "SKAÐI", role: "GIANTESS OF THE MOUNTAINS", desc: "A giantess who marries into the Æsir after her father's death." },
+      { name: "UTGARÐA-LOKI", role: "GIANT-KING & MASTER ILLUSIONIST", desc: "Monarch of Utgard who humiliated Thor through deceptive glamours and cosmic forces." },
+      { name: "SKRYMIR", role: "TITANIC WANDERING GIANT", desc: "A giant whose sleeping bag was mistaken for a grand hall by travelling gods." },
+      { name: "SKAÐI", role: "GIANTESS OF SNOWSHOES & HUNT", desc: "Mountain giantess who demanded blood-money for her father and won a place among the gods." },
+      { name: "ANGRBOÐA", role: "MOTHER OF MONSTERS", desc: "Iron Wood giantess who bore Fenrir, Jörmungandr, and Hel with Loki." },
     ],
     connections: [
       { to: "MIDGARD", label: "UTGARD'S EDGE", desc: "A contested, thinly-settled border between human and giant lands." },
       { to: "ASGARD", label: "IRON WOOD ROADS", desc: "Contested borderlands where gods and giants have long clashed." },
     ],
     myths: [
-      { title: "THOR AND THE GIANTS", desc: "Recurring contests of strength between the thunder god and Jötunheim." },
-      { title: "THOR'S JOURNEY TO UTGARD", desc: "Thor and his companions are tested and humbled in a giant's stronghold." },
-      { title: "SKAÐI'S CHOICE", desc: "A giantess chooses a husband among the gods by his feet alone." },
+      { title: "THOR AND THE GIANTS", desc: "Recurring contests of strength and cunning between the thunder god and giant lords." },
+      { title: "THOR'S JOURNEY TO UTGARD", desc: "Thor drinks from the sea and wrestles Old Age herself under giant illusions." },
+      { title: "SKAÐI'S VENGEANCE", desc: "Skaði marches on Asgard in full armor to avenge her father Thiassi." },
     ],
     lives: ["GIANTS", "CREATURES"],
   },
@@ -321,24 +343,28 @@ const REALMS = {
       known: ["MJÖLLNIR", "GUNGNIR", "DRAUPNIR"],
       position: "UNDER REALM",
     },
+    lore: "Deep beneath the crust of Yggdrasil lies Svartalfheim, a labyrinthine underworld echoing with anvil strikes, magma rivers, and glowing gemstone veins. Here dwarven master artisans manipulate earth magic to craft items infused with cosmic power.",
+    artifacts: ["MJÖLNIR", "GUNGNIR", "DRAUPNIR", "GLEIPNIR", "GULLINBURSTI"],
     places: [
-      { name: "THE SONS OF IVALDI'S FORGE", x: 32, y: 34, desc: "Workshop of the dwarves who crafted Odin's spear and Sif's golden hair." },
-      { name: "BROKKR & EITRI'S HALL", x: 68, y: 56, desc: "Where Mjölnir, Draupnir and Gullinbursti were forged in a wager with Loki." },
-      { name: "THE DEEP GALLERIES", x: 50, y: 82, desc: "Tunnels said to run beneath Midgard, rich in ore and old magic." },
+      { name: "THE SONS OF IVALDI'S FORGE", x: 32, y: 34, desc: "Legendary workshop where Odin's spear Gungnir and Sif's golden hair were wrought." },
+      { name: "BROKKR & EITRI'S HALL", x: 68, y: 56, desc: "Magma forge where Thor's hammer Mjölnir was forged despite Loki's interference." },
+      { name: "THE DEEP GALLERIES", x: 50, y: 82, desc: "Glowing crystal caverns housing subterranean dwarf cities and ore vaults." },
+      { name: "NIDAVELLIR CAVERNS", x: 22, y: 68, desc: "Golden halls beneath the mountain where Sindri weaves magical metals." },
     ],
     inhabitants: [
-      { name: "BROKKR", role: "MASTER SMITH", desc: "Dwarf smith who, with Eitri, forged three of the gods' greatest treasures." },
-      { name: "EITRI", role: "MASTER SMITH", desc: "Brokkr's brother and forge-partner, credited with Mjölnir's making." },
-      { name: "THE SONS OF IVALDI", role: "SMITHS", desc: "Dwarven craftsmen responsible for Gungnir, Skíðblaðnir, and Sif's hair." },
+      { name: "BROKKR", role: "MASTER FORGE-SMITH", desc: "Dwarf master smith who worked the bellows to forge Mjölnir and Draupnir." },
+      { name: "EITRI", role: "MASTER CRAFTSMAN", desc: "Brokkr's brother, famed for pouring sacred magic into glowing crucible fires." },
+      { name: "THE SONS OF IVALDI", role: "ELDER SMITHS", desc: "Craftsmen who forged Skidbladnir, the ship that folds like cloth." },
+      { name: "ALVÍSS", role: "ALL-WISE DWARF", desc: "Subterranean scholar whose wisdom was tested by Thor until sunrise turned him to stone." },
     ],
     connections: [
       { to: "MIDGARD", label: "THE DEEP GALLERIES", desc: "Tunnels the sources suggest run beneath the mortal world." },
       { to: "NIFLHEIM", label: "SHARED UNDER-REALM", desc: "Both are counted among the lower, darker regions of the cosmos." },
     ],
     myths: [
-      { title: "THE WAGER WITH LOKI", desc: "Loki bets his head that Brokkr and Eitri cannot outdo the Sons of Ivaldi." },
-      { title: "THE FORGING OF MJÖLNIR", desc: "A fly's sting nearly ruins Thor's hammer before it is finished." },
-      { title: "SIF'S GOLDEN HAIR", desc: "Dwarven smiths replace what Loki cut, spinning hair from pure gold." },
+      { title: "THE WAGER WITH LOKI", desc: "Loki bets his head that dwarven brothers cannot out-craft Ivaldi's golden wonders." },
+      { title: "THE FORGING OF MJÖLNIR", desc: "A stinging fly fails to stop Brokkr and Eitri from forging Thor's legendary hammer." },
+      { title: "SIF'S GOLDEN HAIR", desc: "Dwarven smiths spin true living gold to replace the locks severed by Loki." },
     ],
     lives: ["DWARVES", "ELVES"],
   },
@@ -368,22 +394,25 @@ const REALMS = {
       known: ["SURTR", "LÆVATEINN", "RAGNARÖK'S FLAME"],
       position: "ANCIENT REALM",
     },
+    lore: "Muspelheim is a primordial crucible of raging flames, molten magma lakes, and intense radiant heat that existed prior to time. Guarded by Surtr with his flaming sword brighter than the sun, it holds the apocalyptic fire that will burn the world tree at Ragnarök.",
+    artifacts: ["SURTR'S FLAMING SWORD", "LÆVATEINN", "CINDERS OF CREATION"],
     places: [
-      { name: "SURTR'S WATCH", x: 50, y: 24, desc: "Where the fire-giant Surtr is said to wait, sword drawn, for the end of the world." },
-      { name: "THE BURNING PLAINS", x: 20, y: 58, desc: "A landscape of ash and heat older than Midgard itself." },
-      { name: "GINNUNGAGAP'S EDGE", x: 76, y: 70, desc: "The border where Muspelheim's fire once met Niflheim's ice at the world's birth." },
+      { name: "SURTR'S WATCH", x: 50, y: 24, desc: "The glowing precipice where the fire lord stands vigil until the doom of gods." },
+      { name: "THE BURNING PLAINS", x: 20, y: 58, desc: "Ash-covered expanses where rivers of liquid fire flow eternally." },
+      { name: "GINNUNGAGAP'S EDGE", x: 76, y: 70, desc: "The ancient border where Muspelheim's embers ignited Niflheim's ice at the dawn of time." },
     ],
     inhabitants: [
-      { name: "SURTR", role: "FIRE-GIANT LORD", desc: "Guardian of Muspelheim, fated to set the Nine Realms alight at Ragnarök." },
-      { name: "THE SONS OF MUSPELL", role: "FIRE-GIANTS", desc: "Surtr's kin, said to ride out together when the final battle begins." },
+      { name: "SURTR", role: "FIRE-GIANT LORD & GUARDIAN", desc: "Primordial titan holding a sword of blazing heat destined to consume the cosmos." },
+      { name: "THE SONS OF MUSPELL", role: "FIRE WARRIORS", desc: "Hordes of fire entities who will ride across Bifröst, causing the bridge to shatter." },
+      { name: "SINMARA", role: "KEEPER OF LÆVATEINN", desc: "Consort of Surtr who guards the legendary flaming blade inside a nine-locked chest." },
     ],
     connections: [
       { to: "NIFLHEIM", label: "GINNUNGAGAP", desc: "The primordial void where fire and ice first met and shaped creation." },
       { to: "ASGARD", label: "RAGNARÖK'S PATH", desc: "The route Surtr's forces are prophesied to take against the gods." },
     ],
     myths: [
-      { title: "THE SHAPING OF THE WORLD", desc: "Muspelheim's heat and Niflheim's frost meet in the void to form Ymir." },
-      { title: "RAGNARÖK", desc: "Surtr rides forth with fire that engulfs the Nine Realms." },
+      { title: "THE SHAPING OF THE WORLD", desc: "Muspelheim's sparks meet Niflheim's rime in Ginnungagap to spark the first life." },
+      { title: "THE DOOM OF RAGNARÖK", desc: "Surtr flings fire across the nine realms, destroying both gods and giants." },
     ],
     lives: ["GIANTS"],
   },
@@ -413,12 +442,16 @@ const REALMS = {
       known: ["HVERGELMIR", "GINNUNGAGAP", "ELIVÁGAR"],
       position: "ANCIENT REALM",
     },
+    lore: "Niflheim is an eternal realm of dense freezing fog, rime frost, and absolute silence. It harbors Hvergelmir, the boiling subterranean spring that feeds the eleven venomous rivers of Élivágar.",
+    artifacts: ["ICE OF ÉLIVÁGAR", "HVERGELMIR VIAL", "RIME SHROUD"],
     places: [
-      { name: "HVERGELMIR", x: 50, y: 30, desc: "The roaring spring from which the primordial rivers of the world are said to flow." },
-      { name: "THE FROST WASTES", x: 24, y: 66, desc: "Vast, silent expanses of ice stretching toward the void's edge." },
+      { name: "HVERGELMIR", x: 50, y: 30, desc: "The cosmic roaring spring where the dragon NÍÐHÖGGR gnaws Yggdrasil's lowest root." },
+      { name: "THE FROST WASTES", x: 24, y: 66, desc: "Vast, silent expanses of frozen mist stretching into absolute darkness." },
+      { name: "ÉLIVÁGAR RIVERS", x: 74, y: 78, desc: "The poisonous icy rivers whose frozen crusts drifted into Ginnungagap." },
     ],
     inhabitants: [
-      { name: "(UNRECORDED)", role: "NO NAMED INHABITANTS", desc: "The sources describe Niflheim's cold and mist, but name no beings native to it." },
+      { name: "NÍÐHÖGGR", role: "MALICIOUS DRAGON", desc: "Serpentine dragon coiled beneath Hvergelmir, gnawing on the root of the world tree." },
+      { name: "FROST SPECTRES", role: "PRIMORDIAL ECHOES", desc: "Whispering mist phantoms created from the venomous frost of Élivágar." },
     ],
     connections: [
       { to: "MUSPELHEIM", label: "GINNUNGAGAP", desc: "The primordial void where fire and ice first met and shaped creation." },
@@ -426,7 +459,8 @@ const REALMS = {
       { to: "HEL", label: "LATER ASSOCIATION", desc: "Some later sources blur Niflheim's cold with Hel's domain of the dead." },
     ],
     myths: [
-      { title: "THE SHAPING OF THE WORLD", desc: "Muspelheim's heat and Niflheim's frost meet in the void to form Ymir." },
+      { title: "THE COSMIC SPRINGS", desc: "Hvergelmir sends forth rivers that freeze in the void to begin world creation." },
+      { title: "THE GNAWING DRAGON", desc: "Níðhöggr trades insults with the eagle atop Yggdrasil via the squirrel Ratatoskr." },
     ],
     lives: ["CREATURES"],
   },
@@ -456,22 +490,26 @@ const REALMS = {
       known: ["HEL", "GARMR", "THE HELWAY"],
       position: "LOWER REALM",
     },
+    lore: "Helheim is a gloomy, quiet subterranean realm enveloped in fog and heavy silent mists. It is neither a place of torture nor eternal punishment, but a silent underworld hall for those who died of old age, illness, or quiet peaceful deaths.",
+    artifacts: ["NAGLFAR NAIL SHIP", "GJALLARBRÚ GOLD BRIDGE", "DISH OF HUNGER"],
     places: [
-      { name: "ÉLJÚÐNIR", x: 50, y: 28, desc: "Hel's hall, named in the Prose Edda as a place of hunger and dim light." },
-      { name: "GJÖLL", x: 22, y: 60, desc: "The river bordering Hel's realm, crossed by the gold-thatched bridge Gjallarbrú." },
-      { name: "THE HELWAY", x: 74, y: 76, desc: "The long downward road the dead are said to travel to reach Hel." },
+      { name: "ÉLJÚÐNIR", x: 50, y: 28, desc: "Hel's hall, with thresholds named Stumbling-Block and plates named Hunger." },
+      { name: "GJÖLL RIVER & GJALLARBRÚ", x: 22, y: 60, desc: "The river bordering Hel, crossed by a roofed bridge of burning gold guarded by MÓÐGUÐR." },
+      { name: "GNIPAHELLIR", x: 74, y: 76, desc: "The cavern mouth at the entry of Hel where the blood-stained hound Garmr is bound." },
+      { name: "NÁSTRÖND", x: 80, y: 40, desc: "The Shore of Corpses where oathbreakers and murderers are punished by Níðhöggr." },
     ],
     inhabitants: [
-      { name: "HEL", role: "RULER OF THE DEAD", desc: "Daughter of Loki, given lordship over those who die without glory." },
-      { name: "GARMR", role: "GUARDIAN HOUND", desc: "A hound bound at Gnipahellir, said to break free at Ragnarök." },
+      { name: "HEL", role: "QUEEN OF THE UNDERWORLD", desc: "Loki's daughter, half living skin and half rotting corpse, ruling with solemn dignity." },
+      { name: "GARMR", role: "BLOOD-STAINED GUARDIAN HOUND", desc: "Monstrous hound who howls at Gnipahellir until breaking free at Ragnarök." },
+      { name: "MÓÐGUÐR", role: "WATCH-MAIDEN OF THE BRIDGE", desc: "Maiden who guards Gjallarbrú and questions all dead souls crossing into Hel." },
     ],
     connections: [
       { to: "MIDGARD", label: "THE HELWAY", desc: "The road the dead are said to travel downward and northward." },
       { to: "NIFLHEIM", label: "LATER ASSOCIATION", desc: "Some later sources blur Niflheim's cold with Hel's domain of the dead." },
     ],
     myths: [
-      { title: "BALDR IN HEL", desc: "Hermóð rides to Hel to plead for the return of the slain Baldr." },
-      { title: "RAGNARÖK", desc: "Hel's dead are said to sail forth on the ship Naglfar in the final battle." },
+      { title: "HERMÓÐ'S RIDE TO HEL", desc: "Odin's messenger rides nine nights down the Helway to bargain for Baldr's return." },
+      { title: "THE SAILING OF NAGLFAR", desc: "At Ragnarök, a ship made from the unpared nails of dead men sails out of Hel." },
     ],
     lives: ["THE DEAD", "CREATURES"],
   },
@@ -760,9 +798,6 @@ function AsgardScene({ realm, mobile }) {
 
   return (
     <group>
-      <mesh ref={arcRef} geometry={bifrostGeo}>
-        <meshStandardMaterial vertexColors emissive="#ffffff" emissiveIntensity={1.4} toneMapped={false} />
-      </mesh>
       {pillars.map((p, i) => (
         <mesh key={i} position={[p.x, p.h / 2 - 3, p.z]}>
           <cylinderGeometry args={[0.35, 0.5, p.h, 6]} />
@@ -1378,7 +1413,20 @@ export default function RealmExperience({ realmId: realmIdProp, onNavigateRealm,
         <p className="section-label">DISCOVER</p>
 
         <Disclosure label="HISTORY & NATURE" defaultOpen>
-          <p>{realm.description}</p>
+          <p className="discover-summary">{realm.description}</p>
+          {realm.lore && <p className="discover-lore">{realm.lore}</p>}
+          {realm.artifacts && (
+            <div className="discover-artifacts">
+              <span className="artifacts-title">LEGENDARY RELICS & ARTIFACTS:</span>
+              <div className="artifacts-tags">
+                {realm.artifacts.map((art) => (
+                  <span key={art} className="artifact-tag">
+                    ✦ {art}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </Disclosure>
 
         <Disclosure label="IMPORTANT PLACES">
@@ -1765,6 +1813,12 @@ function GlobalStyles() {
       .disclosure-icon { color: var(--c-accent); font-family: var(--font-mono); width: 1.2em; }
       .disclosure-panel { overflow: hidden; transition: max-height 480ms ease; }
       .disclosure-inner { padding-bottom: 1.6rem; color: var(--c-ink); opacity: 0.85; line-height: 1.7; }
+      .discover-summary { margin-top: 0; margin-bottom: 0.8rem; }
+      .discover-lore { opacity: 0.9; font-style: italic; border-left: 2px solid var(--c-accent); padding-left: 1rem; margin: 1rem 0; }
+      .discover-artifacts { margin-top: 1.2rem; }
+      .artifacts-title { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.14em; color: var(--c-dim); display: block; margin-bottom: 0.6rem; }
+      .artifacts-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+      .artifact-tag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; background: rgba(255,255,255,0.04); border: 1px dashed var(--c-accent); color: var(--c-accent); border-radius: 4px; }
 
       .places-map { position: relative; height: 340px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 1rem; }
       .place-node { position: absolute; transform: translate(-50%, -50%); background: none; border: none; color: var(--c-ink);
