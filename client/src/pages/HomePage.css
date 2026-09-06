@@ -1,0 +1,429 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ------------------------------------------------------------------
+   RAGNARÖK — Dark Atmospheric Theme & Design System
+   High-performance GPU-accelerated styling
+------------------------------------------------------------------- */
+
+:root {
+    --rag-void: #05070a;
+    --rag-deep: #0b0f17;
+    --rag-surface: #101622;
+    --rag-card-bg: rgba(15, 22, 34, 0.65);
+    --rag-card-border: rgba(255, 255, 255, 0.08);
+    --rag-card-hover-border: rgba(56, 189, 248, 0.35);
+
+    /* Mythology Palette Tokens */
+    --rag-gold: #fbbf24;
+    --rag-gold-glow: rgba(251, 191, 36, 0.3);
+    --rag-ice: #38bdf8;
+    --rag-ice-glow: rgba(56, 189, 248, 0.25);
+    --rag-ember: #f97316;
+    --rag-ember-glow: rgba(249, 115, 22, 0.3);
+    --rag-violet: #c084fc;
+    --rag-violet-glow: rgba(192, 132, 252, 0.25);
+
+    --rag-text-main: #f1f5f9;
+    --rag-text-sub: #94a3b8;
+    --rag-text-muted: #64748b;
+    --rag-text-parchment: #e2e8f0;
+
+    --font-display: 'Cinzel', 'Times New Roman', serif;
+    --font-body: 'EB Garamond', Georgia, serif;
+    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.rag-root {
+    background-color: var(--rag-void);
+    color: var(--rag-text-main);
+    font-family: var(--font-ui);
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    isolation: isolate;
+    --px: 0;
+    --py: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.rag-root * {
+    box-sizing: border-box;
+}
+
+.rag-root ::selection {
+    background: var(--rag-ember);
+    color: #000;
+}
+
+/* ---------- Ambient Background Glows & Noise ---------- */
+.rag-bg-glows {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-aurora {
+    position: absolute;
+    top: -15%;
+    left: 20%;
+    width: 60vw;
+    height: 50vh;
+    background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.12), transparent 70%);
+    filter: blur(80px);
+    transform: translateZ(0);
+}
+
+.bg-fire-ember {
+    position: absolute;
+    bottom: -10%;
+    right: 15%;
+    width: 50vw;
+    height: 45vh;
+    background: radial-gradient(ellipse at center, rgba(249, 115, 22, 0.14), transparent 70%);
+    filter: blur(80px);
+    transform: translateZ(0);
+}
+
+.bg-cosmic-purple {
+    position: absolute;
+    top: 45%;
+    left: -10%;
+    width: 45vw;
+    height: 45vh;
+    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.08), transparent 70%);
+    filter: blur(90px);
+    transform: translateZ(0);
+}
+
+.rag-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(circle at center, transparent 40%, rgba(5, 7, 10, 0.8) 100%);
+}
+
+.rag-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    z-index: 100;
+    background: linear-gradient(90deg, var(--rag-ice), var(--rag-gold), var(--rag-ember));
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    transition: width 0.1s linear;
+}
+
+/* ---------- Custom Cursor ---------- */
+.rag-cursor-dot,
+.rag-cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 50%;
+    will-change: transform;
+}
+
+.rag-cursor-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--rag-ice);
+    box-shadow: 0 0 8px var(--rag-ice);
+}
+
+.rag-cursor-ring {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    transition: width 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+        height 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.rag-cursor-ring.ring-active {
+    width: 58px;
+    height: 58px;
+    border-color: var(--rag-gold);
+    background-color: rgba(251, 191, 36, 0.08);
+}
+
+/* ---------- Navbar ---------- */
+.rag-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 5vw;
+    transition: background 0.3s ease, border-color 0.3s ease, padding 0.3s ease, backdrop-filter 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.rag-navbar.scrolled {
+    background: rgba(11, 15, 23, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom-color: var(--rag-card-border);
+    padding: 1rem 5vw;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.12em;
+    color: var(--rag-text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.navbar-brand .brand-rune {
+    color: var(--rag-gold);
+    text-shadow: 0 0 12px var(--rag-gold-glow);
+    font-size: 1.4rem;
+}
+
+.navbar-nav {
+    display: flex;
+    gap: 2.2rem;
+}
+
+.nav-link-btn {
+    background: none;
+    border: none;
+    color: var(--rag-text-sub);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.25s ease;
+}
+
+.nav-link-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--rag-ice), var(--rag-gold));
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
+.nav-link-btn:hover,
+.nav-link-btn.active {
+    color: var(--rag-text-main);
+}
+
+.nav-link-btn.active::after,
+.nav-link-btn:hover::after {
+    width: 100%;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-badge-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--rag-card-border);
+    color: var(--rag-ice);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-badge-btn:hover {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--rag-ice);
+    box-shadow: 0 0 15px var(--rag-ice-glow);
+}
+
+/* ---------- Shared Section Styling ---------- */
+.rag-section {
+    position: relative;
+    z-index: 2;
+    padding: 8rem 6vw;
+}
+
+.section-head {
+    max-width: 46rem;
+    margin: 0 auto 4rem;
+    text-align: center;
+}
+
+.section-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--rag-ice);
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.section-eyebrow .rune-icon {
+    color: var(--rag-gold);
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    color: var(--rag-text-main);
+    line-height: 1.08;
+    letter-spacing: 0.02em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.section-sub {
+    margin-top: 1.2rem;
+    font-family: var(--font-body);
+    font-style: italic;
+    color: var(--rag-text-sub);
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+/* ---------- Buttons ---------- */
+.rag-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 2.2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+}
+
+.rag-btn-primary {
+    background: linear-gradient(135deg, var(--rag-gold), #d97706);
+    color: #05070a;
+    border: 1px solid var(--rag-gold);
+    box-shadow: 0 4px 20px var(--rag-gold-glow);
+}
+
+.rag-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.5);
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
+}
+
+.rag-btn-ghost {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--rag-text-main);
+    border: 1px solid var(--rag-card-border);
+    backdrop-filter: blur(10px);
+}
+
+.rag-btn-ghost:hover {
+    border-color: var(--rag-ice);
+    color: var(--rag-ice);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px var(--rag-ice-glow);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    .navbar-nav {
+        display: none;
+    }
+
+    .rag-section {
+        padding: 5rem 5vw;
+    }
+
+    .rag-cursor-dot,
+    .rag-cursor-ring {
+        display: none;
+    }
+}
+
+/* ---------- Final CTA & Footer ---------- */
+.final-cta-section {
+    text-align: center;
+    background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9), var(--rag-void) 80%);
+}
+
+.rag-footer {
+    border-top: 1px solid var(--rag-card-border);
+    padding: 4rem 6vw 2.5rem;
+    background: var(--rag-deep);
+    position: relative;
+    z-index: 5;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 78rem;
+    margin: 0 auto 2.5rem;
+}
+
+.footer-tagline {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--rag-text-muted);
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.footer-nav {
+    display: flex;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+}
+
+.footer-nav span {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--rag-text-sub);
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.footer-nav span:hover {
+    color: var(--rag-gold);
+}
+
+.footer-bottom {
+    text-align: center;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--rag-text-muted);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    padding-top: 1.8rem;
+}
